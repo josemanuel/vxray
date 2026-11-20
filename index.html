@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Espejo de rayos X</title>
+<link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="wrap">
+<div class="stagecol">
+<div class="stage" id="stage">
+<video autoplay="" id="video" muted="" playsinline=""></video>
+<canvas id="shade"></canvas>
+<canvas id="gl"></canvas>
+<canvas id="hud"></canvas>
+<div id="intro">
+<h2>ESPEJO DE RAYOS X</h2>
+<p>Observa el cráneo, el cerebro y los músculos del interior de tu cabeza, seguidos en tiempo real mediante la cámara. Levanta una mano para ver sus huesos.</p>
+<button class="big" id="start">Iniciar cámara</button>
+</div>
+</div>
+</div>
+<aside>
+<h1>Espejo de rayos X</h1>
+<div class="panel"><div id="status">Haz clic en «Iniciar cámara» y permite el acceso a la cámara.</div></div>
+<div class="panel">
+<h3>Capas</h3>
+<div class="chips">
+<button data-preset="skull">Cráneo</button>
+<button data-preset="brain">Cerebro</button>
+<button data-preset="muscles">Músculos</button>
+<button data-preset="all">Todo</button>
+</div>
+<div class="checks">
+<label class="ck"><input id="L_skull" type="checkbox"/><i style="background:#bfe3ff"></i>Cráneo</label>
+<label class="ck"><input id="L_brain" type="checkbox"/><i style="background:#ff9fc0"></i>Cerebro</label>
+<label class="ck"><input id="L_muscles" type="checkbox"/><i style="background:#ff6b5e"></i>Músculos</label>
+<label class="ck"><input id="L_eyes" type="checkbox"/><i style="background:#fff3a8"></i>Ojos</label>
+<label class="ck"><input id="L_outline" type="checkbox"/><i style="background:#6fb6ff"></i>Contorno de la cabeza</label>
+<label class="ck"><input id="L_hands" type="checkbox"/><i style="background:#d9f0ff"></i>Huesos de la mano</label>
+</div>
+<div class="row" style="margin-top:13px;border-top:1px solid var(--line);padding-top:11px">
+<label class="ck" style="font-weight:600"><input id="labels" type="checkbox"/>Mostrar etiquetas</label>
+</div>
+</div>
+<div class="panel">
+<h3>Aspecto</h3>
+<div class="seg" id="style">
+<button data-style="xray">Rayos X</button>
+<button data-style="solid">Sólido</button>
+</div>
+<div class="row"><label for="bright">Brillo</label><input id="bright" max="2.2" min="0.3" step="0.01" type="range"/></div>
+</div>
+<div class="panel">
+<h3>Realidad mixta</h3>
+<div class="row"><label for="real">Mostrar mi imagen real</label><input id="real" max="1" min="0" step="0.01" type="range"/></div>
+<div class="row"><label for="feather">Edge feather <b id="featherv"></b></label><input id="feather" max="1" min="0" step="0.01" type="range"/></div>
+<div class="row">
+<label for="reveal">Visualización</label>
+<select id="reveal">
+<option value="whole">Cabeza completa</option>
+<option value="left">Solo mitad izquierda</option>
+<option value="right">Solo mitad derecha</option>
+<option value="top">Solo parte superior de la cabeza</option>
+<option value="bottom">Solo parte inferior del rostro</option>
+<option value="lens">Lente de rayos X (sigue la punta del dedo)</option>
+</select>
+</div>
+<div class="row" id="cutrow"><label for="cut" id="cutlabel">Posición del corte</label><input id="cut" max="1" min="0" step="0.005" type="range"/></div>
+</div>
+<div class="panel">
+<label class="ck"><input id="showdata" type="checkbox"/>Mostrar datos de seguimiento</label>
+<pre hidden="" id="data"></pre>
+</div>
+<div class="panel">
+<h3>Ajustar a mi cabeza</h3>
+<div class="row"><label for="fs">Overall size <b id="fsv"></b></label><input id="fs" max="1.4" min="0.7" step="0.005" type="range"/></div>
+<div class="row"><label for="fw">Width <b id="fwv"></b></label><input id="fw" max="1.25" min="0.8" step="0.005" type="range"/></div>
+<div class="row"><label for="fh">Height <b id="fhv"></b></label><input id="fh" max="1.25" min="0.8" step="0.005" type="range"/></div>
+<div class="row"><label for="fd">Depth <b id="fdv"></b></label><input id="fd" max="1.25" min="0.8" step="0.005" type="range"/></div>
+<div class="row"><label for="fx">Left / right <b id="fxv"></b></label><input id="fx" max="3" min="-3" step="0.1" type="range"/></div>
+<div class="row"><label for="fy">Up / down <b id="fyv"></b></label><input id="fy" max="4" min="-4" step="0.1" type="range"/></div>
+<div class="row"><label for="fz">Forward / back <b id="fzv"></b></label><input id="fz" max="4" min="-4" step="0.1" type="range"/></div>
+<button class="linkbtn" id="fitreset" type="button">Restablecer ajuste</button>
+<p class="small" style="margin-top:8px">Consejo: selecciona el aspecto Sólido y ajusta «Mostrar mi imagen real» aproximadamente a la mitad; después, alinea el cráneo con tu rostro.</p>
+</div>
+<p class="small">La anatomía procede de un conjunto de datos 3D real de una persona adulta, escalado y fijado a tu cabeza. Muestra la ubicación habitual de las estructuras; no es una exploración de tu cuerpo ni una herramienta médica. El vídeo se procesa en este equipo y nunca se carga en Internet.</p>
+<p class="small">Modelos anatómicos: BodyParts3D, © The Database Center for Life Science, con licencia CC Atribución-CompartirIgual 2.1 Japón. Los modelos se simplificaron y realinearon.</p>
+</aside>
+</div>
+<script src="meshloader.js"></script>
+
+<script src="app.js" type="module"></script>
+</body>
+</html>
